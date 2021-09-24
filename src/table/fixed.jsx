@@ -63,12 +63,12 @@ export default function fixed(BaseComponent, stickyLock) {
         componentDidMount() {
             this.adjustFixedHeaderSize();
             this.scrollToRightEnd = undefined;
-            this.onFixedScrollSync({ currentTarget: this.bodyNode });
+            this.onFixedScrollSync({ currentTarget: this.bodyNode, target: this.bodyNode });
         }
 
         componentDidUpdate() {
             this.adjustFixedHeaderSize();
-            this.onFixedScrollSync({ currentTarget: this.bodyNode });
+            this.onFixedScrollSync({ currentTarget: this.bodyNode, target: this.bodyNode });
         }
 
         getNode = (type, node, lockType) => {
@@ -101,10 +101,10 @@ export default function fixed(BaseComponent, stickyLock) {
 
             const { scrollLeft, scrollWidth, clientWidth } = currentTarget;
             const scrollToRightEnd = !(scrollLeft < scrollWidth - clientWidth);
+            const { prefix, loading } = this.props;
 
-            if (scrollToRightEnd !== this.scrollToRightEnd) {
+            if (!loading && scrollToRightEnd !== this.scrollToRightEnd) {
                 this.scrollToRightEnd = scrollToRightEnd;
-                const { prefix } = this.props;
                 const table = this.getTableNode();
 
                 const leftFunc = scrollToRightEnd ? 'removeClass' : 'addClass';
@@ -125,23 +125,16 @@ export default function fixed(BaseComponent, stickyLock) {
         };
 
         adjustFixedHeaderSize() {
-            const { hasHeader, rtl } = this.props;
+            const { hasHeader, rtl, prefix } = this.props;
             const paddingName = rtl ? 'paddingLeft' : 'paddingRight';
             const marginName = rtl ? 'marginLeft' : 'marginRight';
             const body = this.bodyNode;
+            const scrollBarSize = +dom.scrollbar().width || 0;
 
             if (hasHeader && !this.props.lockType && body) {
-                const scrollBarSize = +dom.scrollbar().width || 0;
                 const hasVerScroll = body.scrollHeight > body.clientHeight,
                     hasHozScroll = body.scrollWidth > body.clientWidth;
-                const style = {
-                    [marginName]: scrollBarSize,
-                };
-
-                if (!stickyLock) {
-                    style[paddingName] = scrollBarSize;
-                }
-
+                const style = {};
                 if (!hasVerScroll) {
                     style[paddingName] = 0;
                     style[marginName] = 0;
@@ -153,11 +146,24 @@ export default function fixed(BaseComponent, stickyLock) {
                         style.paddingBottom = scrollBarSize;
                     } else {
                         style.paddingBottom = scrollBarSize;
-                        style[marginName] = 0;
+                    }
+                    if (hasVerScroll) {
+                        style[marginName] = scrollBarSize;
                     }
                 }
 
                 dom.setStyle(this.headerNode, style);
+            }
+
+            if (hasHeader && !this.props.lockType && this.headerNode) {
+                const fixer = this.headerNode.querySelector(`.${prefix}table-header-fixer`);
+                const height = dom.getStyle(this.headerNode, 'height');
+                const paddingBottom = dom.getStyle(this.headerNode, 'paddingBottom');
+
+                dom.setStyle(fixer, {
+                    width: scrollBarSize,
+                    height: height - paddingBottom,
+                });
             }
         }
 

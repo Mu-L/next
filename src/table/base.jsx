@@ -159,7 +159,7 @@ class Table extends React.Component {
          */
         filterParams: PropTypes.object,
         /**
-         * 当前排序的字段,使用此属性可以控制表格的字段的排序,格式为{dataIndex: 'asc'}
+         * 当前排序的字段,使用此属性可以控制表格的字段的排序,格式为{[dataIndex]: 'asc' | 'desc' } , 例如  {id: 'desc'}
          */
         sort: PropTypes.object,
         /**
@@ -225,9 +225,14 @@ class Table extends React.Component {
          */
         getExpandedColProps: PropTypes.func,
         /**
-         * 默认情况下展开的 Expand行 或者 Tree行 , 传入此属性为受控状态，一般配合 onRowOpen 使用
+         * 当前展开的 Expand行 或者 Tree行 , 传入此属性为受控状态，一般配合 onRowOpen 使用
          */
         openRowKeys: PropTypes.array,
+        /**
+         * 默认情况下展开的 Expand行 或者 Tree行，非受控模式
+         * @version 1.23.22
+         */
+        defaultOpenRowKeys: PropTypes.array,
         /**
          * 在 Expand行 或者 Tree行 展开或者收起的时候触发的事件
          * @param {Array} openRowKeys 展开的渲染行的key
@@ -335,14 +340,21 @@ class Table extends React.Component {
         getTableInstance: PropTypes.func,
         getTableInstanceForFixed: PropTypes.func,
         getTableInstanceForVirtual: PropTypes.func,
+        getTableInstanceForExpand: PropTypes.func,
     };
 
     constructor(props, context) {
         super(props, context);
-        const { getTableInstance, getTableInstanceForVirtual, getTableInstanceForFixed } = this.context;
+        const {
+            getTableInstance,
+            getTableInstanceForVirtual,
+            getTableInstanceForFixed,
+            getTableInstanceForExpand,
+        } = this.context;
         getTableInstance && getTableInstance(props.lockType, this);
         getTableInstanceForFixed && getTableInstanceForFixed(props.lockType, this);
         getTableInstanceForVirtual && getTableInstanceForVirtual(props.lockType, this);
+        getTableInstanceForExpand && getTableInstanceForExpand(this);
         this.notRenderCellIndex = [];
     }
 
@@ -403,6 +415,10 @@ class Table extends React.Component {
             Children.forEach(children, child => {
                 if (child) {
                     const props = { ...child.props };
+
+                    if (child.ref) {
+                        props.ref = child.ref;
+                    }
 
                     if (
                         !(
@@ -549,8 +565,19 @@ class Table extends React.Component {
             const { Header = HeaderComponent, Wrapper = WrapperComponent, Body = BodyComponent } = components;
             const colGroup = this.renderColGroup(flatChildren);
 
-            return (
-                <Wrapper colGroup={colGroup} ref={this.getWrapperRef} prefix={prefix} tableWidth={tableWidth}>
+            return [
+                <div
+                    key={`${prefix}table-column-resize-proxy`}
+                    ref={this.getResizeProxyDomRef}
+                    className={`${prefix}table-column-resize-proxy`}
+                />,
+                <Wrapper
+                    key={`${prefix}table-wrapper`}
+                    colGroup={colGroup}
+                    ref={this.getWrapperRef}
+                    prefix={prefix}
+                    tableWidth={tableWidth}
+                >
                     {hasHeader ? (
                         <Header
                             prefix={prefix}
@@ -560,6 +587,7 @@ class Table extends React.Component {
                             colGroup={colGroup}
                             className={`${prefix}table-header`}
                             filterParams={filterParams}
+                            tableEl={this.tableEl}
                             columns={groupChildren}
                             locale={locale}
                             headerCellRef={this.getHeaderCellRef}
@@ -570,6 +598,7 @@ class Table extends React.Component {
                             onSort={this.onSort}
                             sortIcons={sortIcons}
                             tableWidth={tableWidth}
+                            resizeProxyDomRef={this.resizeProxyDomRef}
                         />
                     ) : null}
                     <Body
@@ -600,12 +629,19 @@ class Table extends React.Component {
                         tableWidth={tableWidth}
                     />
                     {wrapperContent}
-                </Wrapper>
-            );
+                </Wrapper>,
+            ];
         } else {
             return null;
         }
     }
+
+    getResizeProxyDomRef = resizeProxyDom => {
+        if (!resizeProxyDom) {
+            return this.resizeProxyDomRef;
+        }
+        this.resizeProxyDomRef = resizeProxyDom;
+    };
 
     getWrapperRef = wrapper => {
         if (!wrapper) {

@@ -43,6 +43,10 @@ export default class Drawer extends Component {
          */
         closeable: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
         /**
+         * 隐藏时是否保留子节点，不销毁
+         */
+        cache: PropTypes.bool,
+        /**
          * [推荐]控制对话框关闭的方式，值可以为字符串或者数组，其中字符串、数组均为以下值的枚举：
          * **close** 表示点击关闭按钮可以关闭对话框
          * **mask** 表示点击遮罩区域可以关闭对话框
@@ -60,6 +64,10 @@ export default class Drawer extends Component {
          * @param {Object} event 关闭时事件对象
          */
         onClose: PropTypes.func,
+        /**
+         * 对话框打开后的回调函数
+         */
+        afterOpen: PropTypes.func,
         /**
          * 位于页面的位置
          */
@@ -207,7 +215,6 @@ export default class Drawer extends Component {
             placement,
             rtl,
         } = this.props;
-
         const others = pickOthers(Object.keys(Drawer.propTypes), this.props);
 
         return (

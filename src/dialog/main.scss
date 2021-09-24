@@ -12,14 +12,13 @@
     box-shadow: $dialog-shadow;
     text-align: left;
     overflow: hidden;
-    animation-duration: $motion-duration-standard;
-    animation-timing-function: $motion-ease-in-out;
     max-width: 90%;
 
     &-header {
         padding: $dialog-title-padding-top $dialog-title-padding-left-right $dialog-title-padding-bottom $dialog-title-padding-left-right;
         border-bottom: $dialog-title-border-width $line-solid $dialog-title-border-color;
         font-size: $dialog-title-font-size;
+        font-weight: $dialog-title-font-weight;
         background: $dialog-title-bg-color;
         color: $dialog-title-color;
     }

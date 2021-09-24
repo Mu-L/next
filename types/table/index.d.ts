@@ -43,7 +43,7 @@ export interface ColumnProps extends HTMLAttributesWeak, CommonProps {
      * 单元格的对齐方式
      */
     align?: 'left' | 'center' | 'right';
-
+    sortDirections?: Array<'desc' | 'asc' | 'default'>;
     /**
      * 单元格标题的对齐方式, 不配置默认读取align值
      */
@@ -68,6 +68,10 @@ export interface ColumnProps extends HTMLAttributesWeak, CommonProps {
      * 是否支持列宽调整, 当该值设为true，table的布局方式会修改为fixed.
      */
     resizable?: boolean;
+    /**
+     * 是否支持异步列宽调整, 当该值设为true，table的布局方式会修改为fixed.
+     */
+    asyncResizable?: boolean;
 
     /**
      * header cell 横跨的格数，设置为0表示不出现此 th

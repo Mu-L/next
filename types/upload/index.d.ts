@@ -18,6 +18,11 @@ export interface CardProps extends HTMLAttributesWeak, CommonProps {
     action?: string;
 
     /**
+     * 是否支持多选文件，`ie10+` 支持。开启后按住 ctrl 可选择多个文件
+     */
+    multiple?: boolean;
+
+    /**
      * 接受上传的文件类型 (image/png, image/jpg, .doc, .ppt) 详见 [input accept attribute](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/Input#attr-accept)
      */
     accept?: string;
@@ -75,7 +80,7 @@ export interface CardProps extends HTMLAttributesWeak, CommonProps {
     /**
      * 自定义上传方法
      */
-    request?: (option: {}) => {};
+    request?: (option: {}) => void;
 
     /**
      * 文件名字段
@@ -186,15 +191,15 @@ export interface CardProps extends HTMLAttributesWeak, CommonProps {
      * 取消上传的回调
      */
     onCancel?: () => void;
+    /**
+     * 调用系统设备媒体
+     */
+     capture?: string;
 }
 
 export class Card extends React.Component<CardProps, any> {}
 
 export class Dragger extends React.Component<UploadProps, any> {}
-
-interface HTMLAttributesWeak extends React.HTMLAttributes<HTMLElement> {
-    onSelect?: any;
-}
 
 export interface SelecterProps extends HTMLAttributesWeak, CommonProps {
     /**
@@ -236,7 +241,7 @@ export interface SelecterProps extends HTMLAttributesWeak, CommonProps {
      * 拖拽完成回调
      */
     onDrop?: () => void;
-    
+
     /**
      * 是否支持上传文件夹，仅在 chorme 下生效
      */
@@ -244,13 +249,6 @@ export interface SelecterProps extends HTMLAttributesWeak, CommonProps {
 }
 
 export class Selecter extends React.Component<SelecterProps, any> {}
-interface HTMLAttributesWeak extends React.HTMLAttributes<HTMLElement> {
-    onError?: any;
-    onSelect?: any;
-    defaultValue?: any;
-    onChange?: any;
-}
-
 
 export class Uploader {
     /**

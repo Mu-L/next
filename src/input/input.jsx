@@ -132,7 +132,7 @@ export default class Input extends Base {
     }
 
     renderControl() {
-        const { hasClear, readOnly, state, prefix, hint, extra, locale } = this.props;
+        const { hasClear, readOnly, state, prefix, hint, extra, locale, disabled } = this.props;
 
         const lenWrap = this.renderLength();
 
@@ -146,7 +146,8 @@ export default class Input extends Base {
         }
 
         let clearWrap = null;
-        const showClear = hasClear && !readOnly && !!`${this.state.value}`;
+        // showClear属性应该与disable属性为互斥状态
+        const showClear = hasClear && !readOnly && !!`${this.state.value}` && !disabled;
 
         if (hint || showClear) {
             let hintIcon = null;
@@ -274,6 +275,7 @@ export default class Input extends Base {
             addonTextAfter,
             inputRender,
             rtl,
+            composition,
         } = this.props;
 
         const hasAddon = addonBefore || addonAfter || addonTextBefore || addonTextAfter;
@@ -332,10 +334,17 @@ export default class Input extends Base {
             );
         }
 
+        const compositionProps = {};
+        if (composition) {
+            compositionProps.onCompositionStart = this.handleCompositionStart;
+            compositionProps.onCompositionEnd = this.handleCompositionEnd;
+        }
+
         const inputEl = (
             <input
                 {...others}
                 {...props}
+                {...compositionProps}
                 height="100%"
                 type={htmlType}
                 size={htmlSize}
@@ -373,6 +382,7 @@ export default class Input extends Base {
             return (
                 <Group
                     {...dataProps}
+                    prefix={prefix}
                     className={className}
                     style={style}
                     disabled={disabled}
