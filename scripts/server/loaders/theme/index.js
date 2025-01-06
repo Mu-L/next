@@ -8,17 +8,14 @@ const emitConfigHTML = require('./config');
 const themeTplPath = path.resolve(__dirname, '../../tpls/theme.ejs');
 const cwd = process.cwd();
 
-module.exports = function(content) {
+module.exports = function (content) {
     const options = loaderUtils.getOptions(this);
     const disableAnimation = options.disableAnimation;
     const componentName = options.componentName;
 
     this.addDependency(themeTplPath);
 
-    const scripts = [
-        '/common.js',
-        `/${replaceExt(path.relative(cwd, this.resourcePath), '.js')}`,
-    ];
+    const scripts = ['/common.js', `/${replaceExt(path.relative(cwd, this.resourcePath), '.js')}`];
 
     ejs.renderFile(
         themeTplPath,
@@ -30,10 +27,7 @@ module.exports = function(content) {
             if (err) {
                 logger.error(`Render theme demo failed: ${err}`);
             } else {
-                const htmlPath = replaceExt(
-                    path.relative(path.join(cwd, 'docs'), this.resourcePath),
-                    '.html'
-                );
+                const htmlPath = path.join(componentName, 'theme/index.html');
                 this.emitFile(htmlPath, html);
             }
         }

@@ -69,7 +69,9 @@ module.exports = function getWebpackConfig(options) {
     config.plugins.push(
         new webpack.optimize.CommonsChunkPlugin({
             name: 'common',
-            chunks: Object.keys(entry).filter(entryPath => !/docs\/[^/]+\/index\.((en-us)\.)?$/.test(entryPath)),
+            chunks: Object.keys(entry).filter(
+                entryPath => !/docs\/[^/]+\/index\.((en-us)\.)?$/.test(entryPath)
+            ),
         })
     );
 
@@ -86,7 +88,7 @@ function getEntry(entryPaths, componentName, mode) {
     const entry = entryPaths.reduce((ret, entryPath) => {
         const name = path.basename(entryPath, path.extname(entryPath));
         const pathWithoutExt = path.join(path.dirname(entryPath), name);
-        let cssArr = [];
+        const cssArr = [];
         // preview 不需要next样式默认值
         // 通过 mode 判断引入的样式文件
         // if (mode === 'css') {
@@ -168,7 +170,10 @@ function getWebpackPreset(context, options) {
         ]);
     }
     if (typeof options.modules === 'undefined' || options.modules) {
-        preset.plugins.push(require('babel-plugin-add-module-exports'));
+        preset.plugins.push([
+            require('babel-plugin-add-module-exports'),
+            { addDefaultProperty: true },
+        ]);
     }
 
     return preset;
