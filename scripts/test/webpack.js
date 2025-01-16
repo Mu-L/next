@@ -1,6 +1,6 @@
 const getWebpackConfig = require('../webpack/dev');
 
-module.exports = function(componentName, runAll) {
+module.exports = function (componentName, runAll) {
     const config = getWebpackConfig(false);
 
     if (runAll || componentName === 'core') {
@@ -15,10 +15,7 @@ module.exports = function(componentName, runAll) {
                     ? [
                           require.resolve('babel-plugin-istanbul'),
                           {
-                              exclude: [
-                                  `src/!(${componentName})/**/*.@(js|jsx)`,
-                                  'test/**',
-                              ],
+                              exclude: [`src/!(${componentName})/**/*.@(js|jsx)`, 'test/**'],
                           },
                       ]
                     : require.resolve('babel-plugin-istanbul'),
@@ -27,6 +24,9 @@ module.exports = function(componentName, runAll) {
         }
         return rule;
     });
+
+    config.devtool = 'cheap-module-eval-source-map';
+    config.resolve.extensions.push('.ts', '.tsx');
 
     return config;
 };

@@ -1,12 +1,9 @@
 # Latest Log 
 
-## [1.26.15](https://github.com/alibaba-fusion/next/compare/1.26.14...1.26.15) (2023-03-09)
+## [1.27.31](https://github.com/alibaba-fusion/next/compare/1.27.30...1.27.31) (2025-01-06)
 
 
 ### Bug Fixes
 
-* **Input:** fix input groups hover style,close [#3849](https://github.com/alibaba-fusion/next/issues/3849) ([#4274](https://github.com/alibaba-fusion/next/issues/4274)) ([bb37360](https://github.com/alibaba-fusion/next/commit/bb37360))
-* **Input:** update onChange function signature ([#4271](https://github.com/alibaba-fusion/next/issues/4271)) ([a73e73a](https://github.com/alibaba-fusion/next/commit/a73e73a))
-* **Overlay:** filter unused props 'shouldUpdatePosition', close [#3812](https://github.com/alibaba-fusion/next/issues/3812) ([#4277](https://github.com/alibaba-fusion/next/issues/4277)) ([8131740](https://github.com/alibaba-fusion/next/commit/8131740))
-
+* **Core:** 修复使用 css variable 模式构建时，主题包内的 varMap 配置值会被重复覆盖的问题 ([#5002](https://github.com/alibaba-fusion/next/issues/5002)) ([6ed80bf](https://github.com/alibaba-fusion/next/commit/6ed80bf2a5f1eff453fe1ced2eb7a7366e719bd0))
 
